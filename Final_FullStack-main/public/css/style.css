@@ -612,9 +612,26 @@ body::after {
   border-color: var(--brand-200);
   box-shadow: none;
 }
-
 .btn.secondary:hover {
-  background: var(--surface-soft);
+  background: #fff1f3;
+  border-color: var(--brand-500);
+  box-shadow: 0 6px 16px rgba(183, 101, 122, 0.28);
+}
+
+/* custom report theme colors */
+.table-header-red {
+  background: #D81B60;
+  color: #fff;
+}
+
+.btn.red {
+  background: #D81B60;
+  border-color: #c2185b;
+  color: #fff;
+}
+
+.btn.red:hover {
+  background: #c2185b;
 }
 
 .btn.danger {

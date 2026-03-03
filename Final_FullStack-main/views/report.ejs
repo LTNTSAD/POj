@@ -1,0 +1,139 @@
+<%- include('layout-top') %>
+
+<h2>Admin Report</h2>
+<p><a href="/admin/dashboard" class="btn red">Back to Dashboard</a></p>
+
+<!-- filters -->
+<form method="get" action="/admin/report" style="margin-bottom:20px;">
+  <label>Date range:
+    <select name="range">
+      <option value="">All</option>
+      <option value="daily" <%= range==='daily' ? 'selected' : '' %>>Daily</option>
+      <option value="weekly" <%= range==='weekly' ? 'selected' : '' %>>Weekly</option>
+      <option value="monthly" <%= range==='monthly' ? 'selected' : '' %>>Monthly</option>
+    </select>
+  </label>
+  <button type="submit" class="btn red">Apply</button>
+</form>
+
+<!-- key metrics cards -->
+<section class="split">
+  <article class="card">
+    <h3>Total Revenue (Paid)</h3>
+    <p><strong>฿<%= stats.totalRevenuePaid ? stats.totalRevenuePaid.toFixed(2) : '0.00' %></strong></p>
+  </article>
+  <article class="card">
+    <h3>Total Parcels</h3>
+    <p><strong><%= stats.totalParcels %></strong></p>
+  </article>
+  <article class="card">
+    <h3>Pending COD</h3>
+    <p><strong>฿<%= stats.pendingCOD ? stats.pendingCOD.toFixed(2) : '0.00' %></strong></p>
+  </article>
+  <article class="card">
+    <h3>Success Rate</h3>
+    <p><strong><%= (stats.successRate*100).toFixed(1) %>%</strong></p>
+  </article>
+</section>
+
+<h3>Payment Method Analysis</h3>
+<table>
+  <thead>
+      <tr class="table-header-red">
+      <th>Method</th>
+      <th>Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% stats.revenueByMethod.forEach(r => { %>
+      <tr>
+        <td><%= r.payment_method %></td>
+        <td>฿<%= Number(r.total).toFixed(2) %></td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+<h4>COD Outstanding (shipped/delivered but unpaid)</h4>
+<table>
+  <thead>
+    <tr class="table-header-red">
+      <th>Payment ID</th>
+      <th>Amount</th>
+      <th>Parcel Status</th>
+      <th>Payment Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% stats.codOutstanding.forEach(o => { %>
+      <tr>
+        <td><%= o.payment_id %></td>
+        <td>฿<%= Number(o.amount||0).toFixed(2) %></td>
+        <td><%= o.status %></td>
+        <td><%= o.payment_status %></td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+<h3>Parcel Status Tracking</h3>
+<p>Overdue (ready/pending &gt;7 days): <strong><%= stats.overdueCount %></strong></p>
+<h4>Tracking log locations</h4>
+<table>
+  <thead>
+    <tr class="table-header-red">
+      <th>Location</th>
+      <th>Updates</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% stats.trackLocations.forEach(l => { %>
+      <tr>
+        <td><%= l.location %></td>
+        <td><%= l.count %></td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+<h3>Top Customers</h3>
+<table>
+  <thead>
+    <tr class="table-header-red">
+      <th>Customer</th>
+      <th>Parcels Sent</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% stats.topCustomers.forEach(c => { %>
+      <tr>
+        <td><%= c.customer_name %></td>
+        <td><%= c.sentCount %></td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+<h3>Latest 10 Parcels</h3>
+<table>
+  <thead>
+    <tr class="table-header-red">
+      <th>ID</th>
+      <th>Sender</th>
+      <th>Receiver</th>
+      <th>Created</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% stats.latestParcels.forEach(p => { %>
+      <tr>
+        <td><%= p.parcel_id %></td>
+        <td><%= p.sender_name || '-' %></td>
+        <td><%= p.receiver_name %></td>
+        <td><%= p.created_at.split('T')[0] %></td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+<%- include('layout-bottom') %>

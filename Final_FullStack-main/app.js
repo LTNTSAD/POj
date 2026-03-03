@@ -35,6 +35,23 @@ app.use('/', authRoutes);
 app.use('/parcels', parcelRoutes);
 app.use('/admin', adminRoutes);
 
+// helper: list registered routes for debugging
+app.get('/__routes', (req, res) => {
+  const out = [];
+  app._router.stack.forEach((middleware) => {
+    if (middleware.route) {
+      // routes registered directly on the app
+      out.push(middleware.route.path);
+    } else if (middleware.name === 'router' && middleware.handle && middleware.handle.stack) {
+      // router middleware
+      middleware.handle.stack.forEach((handler) => {
+        if (handler.route) out.push(handler.route.path);
+      });
+    }
+  });
+  res.json({ routes: out });
+});
+
 // convenience redirect so /dashboard works
 app.get('/dashboard', (req, res) => {
   if (!req.session || !req.session.customer) return res.redirect('/login');

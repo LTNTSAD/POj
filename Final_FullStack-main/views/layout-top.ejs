@@ -45,6 +45,10 @@
       <% if (typeof session !== 'undefined' && session.customer) { %>
         <div class="nav">
           <span>Welcome, <%= session.customer.customer_name %></span>
+          <% if (session.customer.role === 'admin') { %>
+            <a href="/admin/report">Reports</a>
+            <a href="/admin/dashboard">Dashboard</a>
+          <% } %>
           <a href="/logout">Logout</a>
         </div>
       <% } %>
