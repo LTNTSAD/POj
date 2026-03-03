@@ -5,12 +5,48 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Postal Delivery System</title>
     <link rel="stylesheet" href="/css/style.css" />
+    <style>
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #2c3e50;
+        color: #fff;
+        padding: 15px 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      header h1 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: bold;
+      }
+      .nav {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+      .nav a {
+        background: #e74c3c;
+        color: #fff;
+        padding: 8px 16px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: background 0.3s;
+      }
+      .nav a:hover {
+        background: #c0392b;
+      }
+    </style>
   </head>
   <body>
     <header>
       <h1>Postal Delivery System</h1>
       <% if (typeof session !== 'undefined' && session.customer) { %>
-        <div class="nav">Welcome, <%= session.customer.customer_name %> | <a href="/logout">Logout</a></div>
+        <div class="nav">
+          <span>Welcome, <%= session.customer.customer_name %></span>
+          <a href="/logout">Logout</a>
+        </div>
       <% } %>
     </header>
     <main>

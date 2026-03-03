@@ -30,8 +30,32 @@ CREATE TABLE IF NOT EXISTS Payments (
   payment_id INTEGER PRIMARY KEY AUTOINCREMENT,
   payment_date TEXT DEFAULT (datetime('now')),
   amount REAL NOT NULL,
-  payment_method TEXT,
+  -- method chosen by customer; common values might include
+  -- 'Online Payment', 'Cash on Delivery' (COD), 'Mobile Banking', 
+  -- 'Credit Card', 'PromptPay', 'Bank Transfer', etc.  Stored as TEXT so it can grow.
+  payment_method TEXT NOT NULL DEFAULT 'Online Payment',
   payment_status TEXT DEFAULT 'Pending',
   parcel_id INTEGER UNIQUE,
+  FOREIGN KEY (parcel_id) REFERENCES Parcels(parcel_id) ON DELETE CASCADE
+);
+
+-- optional trigger that will automatically bump the parcel status
+-- when a payment record becomes 'Paid'.  (backend logic also handles this.)
+CREATE TRIGGER IF NOT EXISTS payments_after_update
+AFTER UPDATE ON Payments
+FOR EACH ROW
+WHEN NEW.payment_status = 'Paid'
+BEGIN
+  UPDATE Parcels SET status = 'Ready to Ship' WHERE parcel_id = NEW.parcel_id;
+END;
+
+
+-- tracking history for parcels (one-to-many)
+CREATE TABLE IF NOT EXISTS Tracking (
+  tracking_id INTEGER PRIMARY KEY AUTOINCREMENT,
+  parcel_id INTEGER NOT NULL,
+  update_time TEXT DEFAULT (datetime('now')),
+  location TEXT,
+  description TEXT,
   FOREIGN KEY (parcel_id) REFERENCES Parcels(parcel_id) ON DELETE CASCADE
 );

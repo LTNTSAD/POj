@@ -21,13 +21,17 @@
         <td><%= p.parcel_id %></td>
         <td><%= p.tracking_number %></td>
         <td><%= p.customer_name || p.sender_id %></td>
-        <td><%= p.receiver_name %></td>
+        <td>
+          <%= p.receiver_name %>
+          <% if (p.receiver_phone) { %><br><small><strong>Phone:</strong> <%= p.receiver_phone %></small><% } %>
+          <% if (p.receiver_address) { %><br><small><strong>Address:</strong> <%= p.receiver_address %></small><% } %>
+        </td>
         <td><%= Number(p.shipping_cost).toFixed(2) %></td>
         <td>
           <% let badgeClass=''; let text=p.status; switch(p.status){
                case 'Pending': badgeClass='badge badge-orange'; break;
                case 'Paid': badgeClass='badge badge-green'; break;
-               case 'Shipped': badgeClass='badge badge-blue'; break;
+               case 'Shipped': badgeClass='badge badge-green'; break;
                case 'Delivered': badgeClass='badge badge-gray'; break;
                case 'Cancelled': badgeClass='badge badge-red'; break;
              }
@@ -64,7 +68,9 @@
     <tr>
       <th>ID</th>
       <th>Parcel ID</th>
-
+      <th>Amount</th>
+      <th>Method</th>
+      <th>Date</th>
       <th>Status</th>
       <th>Action</th>
     </tr>
@@ -74,6 +80,9 @@
       <tr>
         <td><%= p.payment_id %></td>
         <td><%= p.parcel_id %></td>
+        <td><%= Number(p.amount || 0).toFixed(2) %></td>
+        <td><%= p.payment_method || '-' %></td>
+        <td><%= p.payment_date ? p.payment_date.split('T')[0] : '-' %></td>
         <td>
           <form action="/admin/payment/update-status" method="post" style="display:inline;">
             <input type="hidden" name="payment_id" value="<%= p.payment_id %>" />
@@ -84,6 +93,7 @@
             </select>
           </form>
         </td>
+        <td><!-- action column, empty for now --></td>
       </tr>
     <% }) %>
   </tbody>

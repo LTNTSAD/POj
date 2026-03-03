@@ -19,7 +19,8 @@ const paymentController = {
         { id: 'bank', name: 'Bank Transfer', icon: '🏦' },
         { id: 'wallet', name: 'Mobile Wallet', icon: '📱' },
         { id: 'card', name: 'Credit Card', icon: '💳' },
-        { id: 'cash', name: 'Cash on Delivery', icon: '💵' }
+        { id: 'online', name: 'Online Payment', icon: '💵' },
+        { id: 'COD', name: 'Cash on Delivery', icon: '🚚' }
       ];
 
       // Generate QR codes for each method (async)
@@ -58,33 +59,39 @@ const paymentController = {
       // ensure we don't create duplicate rows – check existing payment
       Payment.findByParcel(parcelId, (errP, existing) => {
         const db = require('../Database/Database');
-        const finish = () => {
-          db.run('UPDATE Parcels SET status = ? WHERE parcel_id = ?', ['Paid', parcelId], () => {
+        const finish = (newStatus) => {
+          // when payment succeeds, bump parcel status to ready state
+          const target = newStatus || 'Ready to Ship';
+          db.run('UPDATE Parcels SET status = ? WHERE parcel_id = ?', [target, parcelId], () => {
             res.redirect('/parcels/' + parcelId);
           });
         };
 
         if (existing) {
           // update old record instead of creating
+          const chosenMethod = String(req.body.payment_method || '').trim() || 'Online Payment';
+          const paymentStatus = (chosenMethod === 'COD') ? 'Pending' : 'Paid';
           db.run(
             'UPDATE Payments SET amount = ?, payment_status = ?, payment_method = ? WHERE payment_id = ?',
-            [finalAmount, 'Paid', req.body.payment_method || 'COD', existing.payment_id],
+            [finalAmount, paymentStatus, chosenMethod, existing.payment_id],
             (errU) => {
               if (errU) return res.render('payment', { parcel, error: 'Failed to record payment' });
-              finish();
+              finish('Ready to Ship');
             }
           );
         } else {
+          const chosenMethod = String(req.body.payment_method || '').trim() || 'Online Payment';
+          const paymentStatus = (chosenMethod === 'COD') ? 'Pending' : 'Paid';
           Payment.create({
             amount: finalAmount,
-            payment_method: req.body.payment_method || 'COD',
-            payment_status: 'Completed',
+            payment_method: chosenMethod,
+            payment_status: paymentStatus,
             parcel_id: parcelId
           }, (err2, paymentId) => {
             if (err2) {
               return res.render('payment', { parcel, error: 'Failed to record payment' });
             }
-            finish();
+            finish('Ready to Ship');
           });
         }
       });
