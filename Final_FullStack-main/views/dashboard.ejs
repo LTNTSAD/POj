@@ -33,33 +33,58 @@
 <% if (typeof message !== 'undefined') { %>
   <p class="message"><%= message %></p>
 <% } %>
-<table>
-  <thead>
-    <tr><th>ID</th><th>Tracking</th><th>Receiver</th><th>Weight</th><th>Cost</th><th>Status</th><th>Action</th></tr>
-  </thead>
-  <tbody>
-    <% parcels.forEach(p => { %>
+<div class="table-container">
+  <table>
+    <thead>
       <tr>
-        <td><%= p.parcel_id %></td>
-        <td><%= p.tracking_number %></td>
-        <td><%= p.receiver_name %></td>
-        <td><%= p.weight %></td>
-        <td><%= p.shipping_cost %></td>
-        <td><%= p.status %></td>
-        <td>
-          <a href="/parcels/<%= p.parcel_id %>">View</a>
-          <% if (p.status === 'Pending') { %>
-            | <a href="/parcels/<%= p.parcel_id %>/pay">Pay</a>
-          <% } %>
-          <% if (p.status === 'Pending' || p.status === 'Paid') { %>
-            | <form action="/parcels/<%= p.parcel_id %>/cancel" method="post" style="display:inline;">
-                <button type="submit" class="btn secondary" onclick="return confirm('ยืนยันยกเลิกพัสดุนี้?');">Cancel</button>
-              </form>
-          <% } %>
-        </td>
+        <th>ID</th>
+        <th>Tracking</th>
+        <th>Receiver</th>
+        <th>Weight</th>
+        <th>Cost</th>
+        <th>Status</th>
+        <th>Action</th>
       </tr>
-    <% }) %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% parcels.forEach(p => { %>
+        <tr>
+          <td><%= p.parcel_id %></td>
+          <td><%= p.tracking_number %></td>
+          <td>
+            <%= p.receiver_name %>
+            <% if (p.receiver_phone) { %><br><small class="sub-text"><%= p.receiver_phone %></small><% } %>
+          </td>
+          <td><%= p.weight %></td>
+          <td><%= p.shipping_cost %></td>
+          <td>
+            <% let statusClass='';
+               switch(p.status){
+                 case 'Pending': statusClass='status-pending'; break;
+                 case 'Ready to Ship': statusClass='status-ready'; break;
+                 case 'Paid':
+                 case 'Shipped': statusClass='status-paid'; break;
+                 case 'Cancelled': statusClass='status-cancel'; break;
+                 default: statusClass=''; break;
+               }
+            %>
+            <span class="<%= statusClass %>"><%= p.status %></span>
+          </td>
+          <td>
+            <a class="btn small" href="/parcels/<%= p.parcel_id %>">View</a>
+            <% if (p.status === 'Pending') { %>
+              <a class="btn success small" href="/parcels/<%= p.parcel_id %>/pay">Pay</a>
+            <% } %>
+            <% if (p.status === 'Pending' || p.status === 'Paid') { %>
+              <form action="/parcels/<%= p.parcel_id %>/cancel" method="post" style="display:inline;">
+                <button type="submit" class="btn danger small" onclick="return confirm('ยืนยันยกเลิกพัสดุนี้?');">Cancel</button>
+              </form>
+            <% } %>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
 
 <%- include('layout-bottom') %>

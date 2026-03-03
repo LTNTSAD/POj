@@ -16,7 +16,7 @@ th,td{padding:8px;border:1px solid #ddd}
   padding:2px 6px;
   border-radius:4px;
   font-size:0.85em;
-  color:#fff;
+  font-weight:600;
   text-align:center;
 }
 .badge-red{background:#e74c3c}
@@ -24,6 +24,31 @@ th,td{padding:8px;border:1px solid #ddd}
 .badge-blue{background:#3498db}
 .badge-orange{background:#e67e22}
 .badge-gray{background:#95a5a6}
+
+/* status-specific badges for parcels */
+.status-ready {
+  background: #d4edda; /* light green */
+  color: #155724;      /* dark green text */
+}
+.status-pending {
+  background: #fff3e0; /* light orange */
+  color: #a65a00;      /* deep orange text */
+}
+.status-paid {
+  background: #d4edda; /* light green */
+  color: #155724;      /* dark green text */
+}
+.status-cancel {
+  background: #f8d7da; /* light red */
+  color: #721c24;      /* dark red text */
+}
+
+/* small secondary text under names */
+.sub-text {
+  color: #777;
+  font-size: 0.85em;
+}
+
 .error{color:#c0392b}
 :root {
   --ink-900: #2b151a;
@@ -437,8 +462,9 @@ body::after {
   text-decoration: none;
   border-radius: 14px;
   box-shadow: 0 10px 35px rgba(55,8,18,0.16);
-  background: linear-gradient(135deg, rgba(200,16,46,0.15), rgba(150,8,36,0.12));
-  border: 2px solid rgba(246,200,211,0.25);
+  /* changed to green theme so cards are prominent */
+  background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+  border: 2px solid #219150;
   color: #fff;
   transition: all 0.3s ease;
   position: relative;
@@ -474,8 +500,8 @@ body::after {
 .action-card:hover {
   transform: translateY(-8px) scale(1.04);
   box-shadow: 0 20px 50px rgba(55,8,18,0.24);
-  border-color: rgba(212,175,55,0.4);
-  background: linear-gradient(135deg, rgba(200,16,46,0.22), rgba(150,8,36,0.18));
+  border-color: #2e8b57;
+  background: linear-gradient(135deg, #27ae60 0%, #1f8a4d 100%);
 }
 
 .action-card:hover::before {
@@ -540,6 +566,10 @@ body::after {
   background: linear-gradient(180deg, #e53935, #c62828) !important;
 }
 
+/* primary buttons theme */
+.btn {
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
   gap: 6px;
   border: 1px solid var(--brand-600);
@@ -563,6 +593,18 @@ body::after {
 .btn:active {
   transform: translateY(0);
 }
+
+/* small variant for table actions */
+.btn.small {
+  padding: 6px 8px;
+  font-size: 0.82rem;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+/* color variants */
+.btn.success { background: linear-gradient(180deg,#2ecc71,#27ae60); border-color:#27ae60 }
+.btn.danger { background: linear-gradient(180deg,#e74c3c,#c62828); border-color:#b91f1f }
 
 .btn.secondary {
   background: #ffffff;
@@ -603,12 +645,34 @@ td {
   vertical-align: top;
 }
 
+/* table spacing and alignment */
 th {
-  background: #ffe9ee;
-  color: var(--brand-800);
+  background: var(--brand-600); /* match main nav/dark red tone */
+  color: #ffffff;
   font-weight: 800;
   letter-spacing: 0.01em;
   white-space: nowrap;
+}
+
+/* table container gives padding from screen edges */
+.table-container {
+  padding: 14px;
+}
+
+/* Column alignment: ID and Tracking (1,2) left; Weight and Cost (4,5) right */
+table th:nth-child(1), table td:nth-child(1),
+table th:nth-child(2), table td:nth-child(2) {
+  text-align: left;
+}
+table th:nth-child(4), table td:nth-child(4),
+table th:nth-child(5), table td:nth-child(5) {
+  text-align: right;
+}
+
+/* consistent row height */
+table th, table td {
+  padding-top: 12px;
+  padding-bottom: 12px;
 }
 
 tbody tr:hover {

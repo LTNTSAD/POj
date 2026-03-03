@@ -23,23 +23,24 @@
         <td><%= p.customer_name || p.sender_id %></td>
         <td>
           <%= p.receiver_name %>
-          <% if (p.receiver_phone) { %><br><small><strong>Phone:</strong> <%= p.receiver_phone %></small><% } %>
-          <% if (p.receiver_address) { %><br><small><strong>Address:</strong> <%= p.receiver_address %></small><% } %>
+          <% if (p.receiver_phone) { %><br><small class="sub-text"><strong>Phone:</strong> <%= p.receiver_phone %></small><% } %>
+          <% if (p.receiver_address) { %><br><small class="sub-text"><strong>Address:</strong> <%= p.receiver_address %></small><% } %>
         </td>
         <td><%= Number(p.shipping_cost).toFixed(2) %></td>
         <td>
           <% let badgeClass=''; let text=p.status; switch(p.status){
-               case 'Pending': badgeClass='badge badge-orange'; break;
-               case 'Paid': badgeClass='badge badge-green'; break;
-               case 'Shipped': badgeClass='badge badge-green'; break;
+               case 'Pending': badgeClass='status-pending'; break;
+               case 'Ready to Ship': badgeClass='status-ready'; break;
+               case 'Paid':
+               case 'Shipped': badgeClass='status-paid'; break;
                case 'Delivered': badgeClass='badge badge-gray'; break;
-               case 'Cancelled': badgeClass='badge badge-red'; break;
+               case 'Cancelled': badgeClass='status-cancel'; break;
              }
           %>
           <span class="<%= badgeClass %>"><%= text %></span>
         </td>
         <td>
-          <a href="/parcels/<%= p.parcel_id %>">View</a>
+          <a class="btn small" href="/parcels/<%= p.parcel_id %>">View</a>
           <% if(p.status==='Pending'){ %>
             <form action="/admin/parcel/cancel" method="post" style="display:inline;">
               <input type="hidden" name="parcel_id" value="<%= p.parcel_id %>" />
